@@ -34,22 +34,21 @@ public class OrderingServiceImpl implements OrderingService {
 		return orderStatusRepository.findById(1);
 	}
 	public void saveOrder(FoodOrder order){
-		System.out.println(order.getOrderList().get(0).getProducts().get(0));
 		order.setOrderStatus(getOrderStatusForNewOrder());
 		order.setOrderingDate(LocalDateTime.now());
 		orderRepository.save(order);
 	}
 	public MenuItemDTO getMenuItemDTO(){
 		MenuItemDTO dto = new MenuItemDTO();
-		dto.setDesserts(getProductsByType("dessert"));
-		dto.setDrinkAdditives(getProductsByType("drink_additive"));
-		dto.setDrinks(getProductsByType("drink"));
-		dto.setMainOrders(getProductsByType("main_course"));
+		List<Product> products = productRepository.findAll();
+		dto.setDesserts(getProductsByType("dessert",products));
+		dto.setDrinkAdditives(getProductsByType("drink_additive",products));
+		dto.setDrinks(getProductsByType("drink",products));
+		dto.setMainOrders(getProductsByType("main_course",products));
 		return dto;
 	}
 
-	private List<Product> getProductsByType(String type){
-		List<Product> products = productRepository.findAll();
+	private List<Product> getProductsByType(String type,List<Product> products){
 		return products.stream().filter(p->p.getProductCategory().getCategory().equals(type)).collect(Collectors.toList());
 	}
 
